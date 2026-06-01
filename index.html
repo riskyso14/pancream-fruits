@@ -43,6 +43,201 @@
         nav {
             background-color: rgba(253, 251, 247, 0.95) !important;
         }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .cart-item-remove:hover {
+            background-color: #fee2e2;
+        }
+
+        /* Payment Modal Styles */
+        .payment-success-modal {
+            text-align: center;
+        }
+
+        .success-icon {
+            font-size: 64px;
+            color: #22c55e;
+            margin-bottom: 16px;
+        }
+
+        .qr-code-container {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            margin: 20px 0;
+            border: 2px solid #e8a08a;
+        }
+
+        .qr-code-container img {
+            max-width: 280px;
+            width: 100%;
+            margin: 0 auto;
+            display: block;
+        }
+
+        .payment-info-box {
+            background: #f5efe6;
+            padding: 16px;
+            border-radius: 12px;
+            margin: 16px 0;
+            text-align: left;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: #e8a08a;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .payment-verification {
+            background: #f0fdf4;
+            border: 2px solid #22c55e;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .verification-step {
+            display: flex;
+            align-items: center;
+            margin: 12px 0;
+        }
+
+        .verification-step .step-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #22c55e;
+            color: white;
+            font-weight: bold;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .verification-step.completed .step-number {
+            background: #22c55e;
+        }
+
+        .verification-step.pending .step-number {
+            background: #cbd5e1;
+        }
+
+        .verification-step.processing .step-number {
+            animation: spin 1s ease-in-out infinite;
+            background: #f59e0b;
+        }
+
+        /* Custom Radio Button */
+        .payment-option {
+            position: relative;
+            cursor: pointer;
+            display: block;
+        }
+
+        .payment-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .radio-circle {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #cbd5e1;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+
+        .payment-option input[type="radio"]:checked ~ .radio-circle {
+            border-color: #e8a08a;
+            background-color: #e8a08a;
+        }
+
+        .payment-option input[type="radio"]:checked ~ .radio-circle::after {
+            content: "✓";
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .payment-option.active {
+            border-color: #e8a08a !important;
+            background-color: rgba(232, 160, 138, 0.05);
+        }
+
+        .pulse {
+            animation: pulse 1s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
     </style>
 </head>
 <body class="bg-cream-soft text-slate-800">
@@ -58,12 +253,17 @@
             <a href="#tentang" class="hover:text-accent-peach transition">Tentang</a>
             <a href="#kontak" class="hover:text-accent-peach transition">Kontak</a>
         </div>
-     <a href="https://wa.me/+6283161535757" class="bg-green-500 text-white px-6 py-2.5 rounded-full font-bold text-xs uppercase tracking-tighter hover:bg-green-600 transition shadow-lg shadow-green-300 flex items-center space-x-2">
-    <i class="fab fa-whatsapp"></i>
-    <span>Order Now</span>
-</a>
-</a>
-</a>
+        <div class="flex items-center space-x-4">
+            <!-- Cart Button -->
+            <button id="cartBtn" class="relative p-2 text-brown-deep hover:text-accent-peach transition">
+                <i class="fas fa-shopping-cart text-2xl"></i>
+                <span id="cartCount" class="cart-badge hidden">0</span>
+            </button>
+            <a href="https://wa.me/+6283161535757" class="bg-green-500 text-white px-6 py-2.5 rounded-full font-bold text-xs uppercase tracking-tighter hover:bg-green-600 transition shadow-lg shadow-green-300 flex items-center space-x-2">
+                <i class="fab fa-whatsapp"></i>
+                <span>Order Now</span>
+            </a>
+        </div>
     </nav>
 
     <!-- Hero Section -->
@@ -118,49 +318,379 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
             <!-- Pancream Strawberry -->
-            <div class="group bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-xl transition-all border border-stone-100 menu-card">
+            <div class="group bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-xl transition-all border border-stone-100 menu-card flex flex-col">
                 <div class="h-64 overflow-hidden relative">
                     <img src="asset/images/strawberry.jpeg" alt="Strawberry" class="w-full h-full object-cover transition duration-500">
                     <div class="absolute top-4 right-4 bg-white/90 px-3 py-1 rounded-full text-xs font-bold text-brown-deep">Favorit</div>
                 </div>
-                <div class="p-8">
+                <div class="p-8 flex flex-col flex-grow">
                     <h3 class="text-xl font-bold text-brown-deep mb-2">Strawberry Sweet</h3>
                     <p class="text-sm text-gray-500 mb-6">Pancake lembut dengan whipped cream dan potongan stroberi segar yang manis asam.</p>
-                    <div class="flex justify-between items-center">
-                        
+                    <div class="mt-auto">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-2xl font-bold text-brown-deep">Rp 5.000</span>
+                        </div>
+                        <button onclick="addToCart('Strawberry Sweet', 5000, 'asset/images/strawberry.jpeg')" class="w-full bg-accent-peach text-white py-3 rounded-xl font-bold hover:shadow-lg transition flex items-center justify-center space-x-2">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span>Add to Cart</span>
+                        </button>
                     </div>
                 </div>
             </div>
 
             <!-- Pancream Kiwi -->
-            <div class="group bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-xl transition-all border border-stone-100 menu-card">
+            <div class="group bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-xl transition-all border border-stone-100 menu-card flex flex-col">
                 <div class="h-64 overflow-hidden">
                     <img src="asset/images/kiwi.jpeg" alt="Kiwi" class="w-full h-full object-cover transition duration-500">
                 </div>
-                <div class="p-8">
+                <div class="p-8 flex flex-col flex-grow">
                     <h3 class="text-xl font-bold text-brown-deep mb-2">Fresh Kiwi</h3>
                     <p class="text-sm text-gray-500 mb-6">Sensasi segar buah Kiwi hijau pilihan yang kaya vitamin di atas krim lembut.</p>
-                    <div class="flex justify-between items-center">
-                       
+                    <div class="mt-auto">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-2xl font-bold text-brown-deep">Rp 5.000</span>
+                        </div>
+                        <button onclick="addToCart('Fresh Kiwi', 5000, 'asset/images/kiwi.jpeg')" class="w-full bg-accent-peach text-white py-3 rounded-xl font-bold hover:shadow-lg transition flex items-center justify-center space-x-2">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span>Add to Cart</span>
+                        </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Pancream Peach -->
-            <div class="group bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-xl transition-all border border-stone-100 menu-card">
+            <!-- Pancream Mango -->
+            <div class="group bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-xl transition-all border border-stone-100 menu-card flex flex-col">
                 <div class="h-64 overflow-hidden">
-                    <img src="asset/images/mangga.jpeg" alt="Peach" class="w-full h-full object-cover transition duration-500">
+                    <img src="asset/images/mangga.jpeg" alt="Mango" class="w-full h-full object-cover transition duration-500">
                 </div>
-                <div class="p-8">
+                <div class="p-8 flex flex-col flex-grow">
                     <h3 class="text-xl font-bold text-brown-deep mb-2">Golden Mango</h3>
                     <p class="text-sm text-gray-500 mb-6">Potongan buah Mango kuning yang manis dan juicy, perpaduan warna yang cantik.</p>
-                    <div class="flex justify-between items-center">
-                       
+                    <div class="mt-auto">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-2xl font-bold text-brown-deep">Rp 5.000</span>
+                        </div>
+                        <button onclick="addToCart('Golden Mango', 5000, 'asset/images/mangga.jpeg')" class="w-full bg-accent-peach text-white py-3 rounded-xl font-bold hover:shadow-lg transition flex items-center justify-center space-x-2">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span>Add to Cart</span>
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+
+    <!-- Cart Modal -->
+    <div id="cartModal" class="modal">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full mx-4 modal-content max-h-[90vh] overflow-y-auto">
+            <!-- Modal Header -->
+            <div class="bg-brown-deep text-white p-8 flex justify-between items-center rounded-t-3xl sticky top-0 z-10">
+                <h2 class="text-3xl font-bold brand-font">Keranjang Belanja</h2>
+                <button onclick="closeCart()" class="text-2xl hover:text-accent-peach transition">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Cart Items -->
+            <div id="cartItems" class="p-8">
+                <div class="text-center text-gray-500 py-8">
+                    <i class="fas fa-shopping-cart text-4xl mb-4 block opacity-30"></i>
+                    <p>Keranjang Anda kosong</p>
+                </div>
+            </div>
+
+            <!-- Cart Summary -->
+            <div id="cartSummary" class="hidden border-t border-stone-200 p-8 bg-cream-nude">
+                <div class="space-y-4 mb-8">
+                    <div class="flex justify-between text-lg">
+                        <span class="text-brown-deep">Subtotal:</span>
+                        <span id="subtotal" class="font-bold text-brown-deep">Rp 0</span>
+                    </div>
+                    <div class="border-t border-stone-200 pt-4 flex justify-between text-2xl">
+                        <span class="font-bold text-brown-deep">Total:</span>
+                        <span id="total" class="font-bold text-accent-peach">Rp 0</span>
+                    </div>
+                </div>
+
+                <!-- Checkout Button -->
+                <button onclick="goToCheckout()" class="w-full bg-brown-deep text-white py-4 rounded-2xl font-bold text-lg hover:shadow-lg transition">
+                    <i class="fas fa-credit-card mr-2"></i> Lanjut ke Checkout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div id="checkoutModal" class="modal">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full mx-4 modal-content max-h-[90vh] overflow-y-auto">
+            <!-- Checkout Header -->
+            <div class="bg-brown-deep text-white p-8 flex justify-between items-center rounded-t-3xl sticky top-0 z-10">
+                <h2 class="text-3xl font-bold brand-font">Checkout</h2>
+                <button onclick="goBackToCart()" class="text-2xl hover:text-accent-peach transition">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+            </div>
+
+            <div class="p-8">
+                <!-- Order Summary -->
+                <div class="bg-cream-nude p-6 rounded-2xl mb-8">
+                    <h3 class="text-lg font-bold text-brown-deep mb-4">Ringkasan Pesanan</h3>
+                    <div id="checkoutItems" class="space-y-3 mb-4"></div>
+                    <div class="border-t border-stone-200 pt-4 flex justify-between text-xl font-bold">
+                        <span class="text-brown-deep">Total:</span>
+                        <span id="checkoutTotal" class="text-accent-peach">Rp 0</span>
+                    </div>
+                </div>
+
+                <!-- Customer Info -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-bold text-brown-deep mb-4">Informasi Pemesan</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-bold text-brown-deep mb-2">Nama</label>
+                            <input type="text" id="customerName" placeholder="Nama Anda" class="w-full border border-stone-200 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-accent-peach">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-brown-deep mb-2">Catatan (Opsional)</label>
+                            <textarea id="customerNote" placeholder="Tambahkan catatan khusus..." rows="3" class="w-full border border-stone-200 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-accent-peach"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Method Selection -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-bold text-brown-deep mb-4">Metode Pembayaran</h3>
+                    <div class="space-y-3">
+                        <label class="payment-option active border-2 border-stone-200 rounded-xl p-4 hover:border-accent-peach transition" data-method="qris">
+                            <input type="radio" name="payment" value="qris" checked>
+                            <div class="flex items-center">
+                                <div class="radio-circle"></div>
+                                <div>
+                                    <div class="font-bold text-brown-deep">QRIS</div>
+                                    <div class="text-sm text-gray-500">Scan QR Code untuk pembayaran</div>
+                                </div>
+                            </div>
+                        </label>
+
+                        <label class="payment-option border-2 border-stone-200 rounded-xl p-4 hover:border-accent-peach transition" data-method="gopay">
+                            <input type="radio" name="payment" value="gopay">
+                            <div class="flex items-center">
+                                <div class="radio-circle"></div>
+                                <div>
+                                    <div class="font-bold text-brown-deep">GoPay / OVO / Dana</div>
+                                    <div class="text-sm text-gray-500">E-wallet pembayaran digital</div>
+                                </div>
+                            </div>
+                        </label>
+
+                        <label class="payment-option border-2 border-stone-200 rounded-xl p-4 hover:border-accent-peach transition" data-method="cod">
+                            <input type="radio" name="payment" value="cod">
+                            <div class="flex items-center">
+                                <div class="radio-circle"></div>
+                                <div>
+                                    <div class="font-bold text-brown-deep">Bayar Ditempat (COD)</div>
+                                    <div class="text-sm text-gray-500">Bayar saat pesanan tiba</div>
+                                </div>
+                            </div>
+                        </label>
+
+                        <label class="payment-option border-2 border-stone-200 rounded-xl p-4 hover:border-accent-peach transition" data-method="whatsapp">
+                            <input type="radio" name="payment" value="whatsapp">
+                            <div class="flex items-center">
+                                <div class="radio-circle"></div>
+                                <div>
+                                    <div class="font-bold text-brown-deep">Transfer Manual via WhatsApp</div>
+                                    <div class="text-sm text-gray-500">Chat dengan kami untuk transfer</div>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="flex gap-4">
+                    <button onclick="goBackToCart()" class="flex-1 border-2 border-brown-deep text-brown-deep py-4 rounded-2xl font-bold hover:bg-brown-deep hover:text-white transition">
+                        Kembali
+                    </button>
+                    <button onclick="processOrder()" class="flex-1 bg-green-500 text-white py-4 rounded-2xl font-bold hover:bg-green-600 transition flex items-center justify-center space-x-2">
+                        <i class="fas fa-credit-card"></i>
+                        <span>Lanjut Pembayaran</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- QRIS Payment Modal -->
+    <div id="qrisPaymentModal" class="modal">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full mx-4 modal-content">
+            <div class="p-12 text-center payment-success-modal">
+                <div class="mb-6">
+                    <i class="fas fa-qrcode text-6xl text-accent-peach mb-4 block"></i>
+                </div>
+                <h2 class="text-3xl font-bold text-brown-deep mb-2 brand-font">Pembayaran QRIS</h2>
+                <p class="text-gray-600 mb-8">Scan QR Code di bawah dengan smartphone Anda</p>
+                
+                <div class="payment-info-box">
+                    <h4 class="font-bold text-brown-deep mb-3">💰 Total Pembayaran</h4>
+                    <p id="qrisAmount" class="text-3xl font-bold text-accent-peach">Rp 0</p>
+                </div>
+
+                <div class="qr-code-container">
+                    <img src="asset/images/qris.jpeg" alt="QRIS Payment" class="pulse">
+                </div>
+
+                <p class="text-sm text-gray-500 mb-4">Silakan scan QR Code di atas dengan aplikasi pembayaran Anda</p>
+
+                <button onclick="confirmQrisPayment()" class="w-full bg-green-500 text-white py-4 rounded-2xl font-bold hover:bg-green-600 transition mb-3">
+                    ✓ Pembayaran Selesai
+                </button>
+                <button onclick="closeQrisPayment()" class="w-full border-2 border-brown-deep text-brown-deep py-3 rounded-2xl font-bold hover:bg-brown-deep hover:text-white transition">
+                    Kembali
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- E-Wallet Payment Modal -->
+    <div id="ewallletPaymentModal" class="modal">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full mx-4 modal-content">
+            <div class="p-12 text-center payment-success-modal">
+                <div class="mb-6">
+                    <i class="fas fa-mobile-alt text-6xl text-green-500 mb-4 block"></i>
+                </div>
+                <h2 class="text-3xl font-bold text-brown-deep mb-2 brand-font">Pembayaran E-Wallet</h2>
+                <p class="text-gray-600 mb-8">Pilih aplikasi e-wallet dan lakukan pembayaran</p>
+                
+                <div class="payment-info-box">
+                    <h4 class="font-bold text-brown-deep mb-3">Nomor Tujuan</h4>
+                    <p class="text-lg font-bold text-brown-deep">+62 831 6153 5757</p>
+                    <p class="text-xs text-gray-500 mt-2">Nama: Pancream Fruit</p>
+                </div>
+
+                <div class="payment-info-box">
+                    <h4 class="font-bold text-brown-deep mb-3">💰 Total Pembayaran</h4>
+                    <p id="ewallletAmount" class="text-3xl font-bold text-accent-peach">Rp 0</p>
+                </div>
+
+                <div class="grid grid-cols-3 gap-3 my-8">
+                    <button onclick="openGopay()" class="bg-blue-500 text-white py-3 rounded-xl font-bold hover:bg-blue-600 transition flex items-center justify-center space-x-2">
+                        <i class="fas fa-wallet"></i>
+                        <span class="hidden sm:inline">GoPay</span>
+                    </button>
+                    <button onclick="openOvo()" class="bg-purple-500 text-white py-3 rounded-xl font-bold hover:bg-purple-600 transition flex items-center justify-center space-x-2">
+                        <i class="fas fa-wallet"></i>
+                        <span class="hidden sm:inline">OVO</span>
+                    </button>
+                    <button onclick="openDana()" class="bg-cyan-500 text-white py-3 rounded-xl font-bold hover:bg-cyan-600 transition flex items-center justify-center space-x-2">
+                        <i class="fas fa-wallet"></i>
+                        <span class="hidden sm:inline">Dana</span>
+                    </button>
+                </div>
+
+                <p class="text-sm text-gray-500 mb-4">Silakan lakukan pembayaran melalui aplikasi pilihan Anda</p>
+
+                <button onclick="confirmEwalletPayment()" class="w-full bg-green-500 text-white py-4 rounded-2xl font-bold hover:bg-green-600 transition mb-3">
+                    ✓ Pembayaran Selesai
+                </button>
+                <button onclick="closeEwalletPayment()" class="w-full border-2 border-brown-deep text-brown-deep py-3 rounded-2xl font-bold hover:bg-brown-deep hover:text-white transition">
+                    Kembali
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Success Modal -->
+    <div id="paymentSuccessModal" class="modal">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full mx-4 modal-content">
+            <div class="p-12 text-center payment-success-modal">
+                <div class="success-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h2 class="text-3xl font-bold text-brown-deep mb-4 brand-font">Pembayaran Berhasil!</h2>
+                <p class="text-gray-600 mb-6">Terima kasih telah memesan. Pesanan Anda sedang diproses.</p>
+                
+                <!-- Payment Details -->
+                <div id="paymentDetails" class="text-left mb-8"></div>
+
+                <!-- Buttons -->
+                <button onclick="completeOrder()" class="w-full bg-brown-deep text-white py-4 rounded-2xl font-bold hover:shadow-lg transition">
+                    Selesai
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- WhatsApp Chat Modal -->
+    <div id="whatsappChatModal" class="modal">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full mx-4 modal-content">
+            <div class="p-12 text-center payment-success-modal">
+                <div class="mb-6">
+                    <i class="fab fa-whatsapp text-6xl text-green-500 mb-4 block"></i>
+                </div>
+                <h2 class="text-3xl font-bold text-brown-deep mb-4 brand-font">Transfer Manual</h2>
+                <p class="text-gray-600 mb-6">Silakan chat dengan kami untuk informasi transfer dan konfirmasi pesanan.</p>
+                
+                <!-- Payment Details -->
+                <div id="whatsappPaymentDetails" class="text-left mb-8 payment-info-box"></div>
+
+                <!-- Buttons -->
+                <div class="flex gap-4">
+                    <button onclick="closeWhatsappChat()" class="flex-1 border-2 border-brown-deep text-brown-deep py-4 rounded-2xl font-bold hover:bg-brown-deep hover:text-white transition">
+                        Nanti Dulu
+                    </button>
+                    <button onclick="openWhatsappChat()" class="flex-1 bg-green-500 text-white py-4 rounded-2xl font-bold hover:bg-green-600 transition flex items-center justify-center space-x-2">
+                        <i class="fab fa-whatsapp"></i>
+                        <span>Chat Sekarang</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- COD Confirmation Modal -->
+    <div id="codConfirmModal" class="modal">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full mx-4 modal-content">
+            <div class="p-12 text-center payment-success-modal">
+                <div class="mb-6">
+                    <i class="fas fa-truck text-6xl text-blue-500 mb-4 block"></i>
+                </div>
+                <h2 class="text-3xl font-bold text-brown-deep mb-4 brand-font">Pesanan Dikonfirmasi</h2>
+                <p class="text-gray-600 mb-6">Pembayaran akan dilakukan saat pesanan tiba</p>
+                
+                <div class="payment-verification">
+                    <div class="verification-step completed">
+                        <div class="step-number">✓</div>
+                        <span class="text-brown-deep font-bold">Pesanan Dikonfirmasi</span>
+                    </div>
+                    <div class="verification-step processing">
+                        <div class="step-number">2</div>
+                        <span class="text-brown-deep font-bold">Sedang Diproses</span>
+                    </div>
+                    <div class="verification-step pending">
+                        <div class="step-number">3</div>
+                        <span class="text-gray-500">Siap Dikirim</span>
+                    </div>
+                    <div class="verification-step pending">
+                        <div class="step-number">4</div>
+                        <span class="text-gray-500">Pembayaran di Tempat</span>
+                    </div>
+                </div>
+
+                <div class="payment-info-box">
+                    <h4 class="font-bold text-brown-deep mb-3">💰 Total Pembayaran</h4>
+                    <p id="codAmount" class="text-3xl font-bold text-accent-peach">Rp 0</p>
+                </div>
+
+                <button onclick="confirmCodPayment()" class="w-full bg-blue-500 text-white py-4 rounded-2xl font-bold hover:bg-blue-600 transition mb-3">
+                    ✓ Pesanan Dikonfirmasi
+                </button>
+                <button onclick="closeCodConfirm()" class="w-full border-2 border-brown-deep text-brown-deep py-3 rounded-2xl font-bold hover:bg-brown-deep hover:text-white transition">
+                    Kembali
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- Footer / Kontak -->
     <footer id="kontak" class="bg-footer py-20 px-6 md:px-20 text-white overflow-hidden relative">
@@ -175,7 +705,7 @@
                 <div class="flex space-x-4">
                     <a href="https://instagram.com/pancream.fruits" target="_blank" class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center hover:bg-accent-peach transition duration-300"><i class="fab fa-instagram"></i></a>
                     <a href="https://tiktok.com/@pancreamfruit" target="_blank" class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center hover:bg-accent-peach transition duration-300"><i class="fab fa-tiktok"></i></a>
-                    <a href="https://wa.me/621234567890" target="_blank" class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center hover:bg-accent-peach transition duration-300"><i class="fab fa-whatsapp"></i></a>
+                    <a href="https://wa.me/6283161535757" target="_blank" class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center hover:bg-accent-peach transition duration-300"><i class="fab fa-whatsapp"></i></a>
                 </div>
             </div>
 
@@ -193,7 +723,7 @@
                         <div class="w-10 h-10 bg-accent-peach/20 rounded-xl flex items-center justify-center mr-4 group-hover:bg-accent-peach transition">
                             <i class="fas fa-phone"></i>
                         </div>
-                        <a href="https://wa.me/623161535757" class="text-white hover:text-accent-peach transition">+62 831 6153 5757</a>
+                        <a href="https://wa.me/6283161535757" class="text-white hover:text-accent-peach transition">+62 831 6153 5757</a>
                     </div>
                     <div class="flex items-center group">
                         <div class="w-10 h-10 bg-accent-peach/20 rounded-xl flex items-center justify-center mr-4 group-hover:bg-accent-peach transition">
@@ -210,10 +740,10 @@
                         <a href="https://instagram.com/pancream.fruits" target="_blank" class="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center hover:bg-pink-500 transition text-sm">
                             <i class="fab fa-instagram"></i>
                         </a>
-                        <a href="https://tiktok.com/@" target="_blank" class="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center hover:bg-black transition text-sm">
+                        <a href="https://tiktok.com/@pancreamfruit" target="_blank" class="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center hover:bg-black transition text-sm">
                             <i class="fab fa-tiktok"></i>
                         </a>
-                        <a href="https://wa.me/623161535757" target="_blank" class="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center hover:bg-green-500 transition text-sm">
+                        <a href="https://wa.me/6283161535757" target="_blank" class="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center hover:bg-green-500 transition text-sm">
                             <i class="fab fa-whatsapp"></i>
                         </a>
                         <a href="mailto:info@pancreamfruit.com" class="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center hover:bg-red-500 transition text-sm">
@@ -245,5 +775,434 @@
         </div>
     </footer>
 
+    <script>
+        // Cart State
+        let cart = JSON.parse(localStorage.getItem('pancreamCart')) || [];
+        let currentOrder = {};
+
+        // Initialize cart count
+        updateCartCount();
+
+        // Add to Cart Function
+        function addToCart(name, price, image) {
+            const item = {
+                id: Date.now(),
+                name: name,
+                price: price,
+                image: image,
+                quantity: 1
+            };
+            
+            const existingItem = cart.find(c => c.name === name);
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push(item);
+            }
+            
+            saveCart();
+            updateCartCount();
+            openCart();
+            showNotification('Ditambahkan ke keranjang!');
+        }
+
+        // Update Cart Count Badge
+        function updateCartCount() {
+            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const badge = document.getElementById('cartCount');
+            if (count > 0) {
+                badge.textContent = count;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
+        // Save Cart to LocalStorage
+        function saveCart() {
+            localStorage.setItem('pancreamCart', JSON.stringify(cart));
+        }
+
+        // Open Cart Modal
+        function openCart() {
+            renderCartItems();
+            document.getElementById('cartModal').classList.add('active');
+        }
+
+        // Close Cart Modal
+        function closeCart() {
+            document.getElementById('cartModal').classList.remove('active');
+        }
+
+        // Render Cart Items
+        function renderCartItems() {
+            const cartItemsContainer = document.getElementById('cartItems');
+            const cartSummary = document.getElementById('cartSummary');
+            
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = `
+                    <div class="text-center text-gray-500 py-8">
+                        <i class="fas fa-shopping-cart text-4xl mb-4 block opacity-30"></i>
+                        <p>Keranjang Anda kosong</p>
+                    </div>
+                `;
+                cartSummary.classList.add('hidden');
+                return;
+            }
+
+            cartItemsContainer.innerHTML = cart.map(item => `
+                <div class="flex items-center justify-between bg-cream-nude p-6 rounded-2xl mb-4">
+                    <div class="flex items-center space-x-4 flex-1">
+                        <img src="${item.image}" alt="${item.name}" class="w-20 h-20 rounded-xl object-cover">
+                        <div>
+                            <h4 class="font-bold text-brown-deep">${item.name}</h4>
+                            <p class="text-accent-peach font-bold">Rp ${item.price.toLocaleString('id-ID')}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center border border-stone-300 rounded-lg">
+                            <button onclick="decreaseQty(${item.id})" class="px-3 py-1 hover:bg-cream-dark">-</button>
+                            <span class="px-4 font-bold text-brown-deep">${item.quantity}</span>
+                            <button onclick="increaseQty(${item.id})" class="px-3 py-1 hover:bg-cream-dark">+</button>
+                        </div>
+                        <button onclick="removeFromCart(${item.id})" class="w-10 h-10 rounded-lg text-red-500 hover:text-white hover:bg-red-500 transition cart-item-remove">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            document.getElementById('subtotal').textContent = `Rp ${total.toLocaleString('id-ID')}`;
+            document.getElementById('total').textContent = `Rp ${total.toLocaleString('id-ID')}`;
+            cartSummary.classList.remove('hidden');
+        }
+
+        // Quantity Functions
+        function increaseQty(id) {
+            const item = cart.find(c => c.id === id);
+            if (item) {
+                item.quantity += 1;
+                saveCart();
+                renderCartItems();
+            }
+        }
+
+        function decreaseQty(id) {
+            const item = cart.find(c => c.id === id);
+            if (item && item.quantity > 1) {
+                item.quantity -= 1;
+                saveCart();
+                renderCartItems();
+            }
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(c => c.id !== id);
+            saveCart();
+            updateCartCount();
+            renderCartItems();
+            showNotification('Dihapus dari keranjang');
+        }
+
+        // Go to Checkout
+        function goToCheckout() {
+            document.getElementById('cartModal').classList.remove('active');
+            renderCheckoutItems();
+            document.getElementById('checkoutModal').classList.add('active');
+        }
+
+        // Go Back to Cart
+        function goBackToCart() {
+            document.getElementById('checkoutModal').classList.remove('active');
+            openCart();
+        }
+
+        // Render Checkout Items
+        function renderCheckoutItems() {
+            const checkoutItemsContainer = document.getElementById('checkoutItems');
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+            checkoutItemsContainer.innerHTML = cart.map(item => `
+                <div class="flex justify-between items-center text-brown-deep">
+                    <span>${item.name} x${item.quantity}</span>
+                    <span class="font-bold">Rp ${(item.price * item.quantity).toLocaleString('id-ID')}</span>
+                </div>
+            `).join('');
+
+            document.getElementById('checkoutTotal').textContent = `Rp ${total.toLocaleString('id-ID')}`;
+        }
+
+        // Payment Method Selection
+        document.querySelectorAll('.payment-option').forEach(option => {
+            option.addEventListener('click', function(e) {
+                if (e.target.tagName !== 'INPUT') {
+                    const radio = this.querySelector('input[type="radio"]');
+                    radio.checked = true;
+                }
+                
+                document.querySelectorAll('.payment-option').forEach(o => {
+                    o.classList.remove('active');
+                });
+                this.classList.add('active');
+            });
+        });
+
+        // Process Order
+        function processOrder() {
+            const name = document.getElementById('customerName').value.trim();
+            const note = document.getElementById('customerNote').value.trim();
+            const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
+
+            if (!name) {
+                showNotification('Nama harus diisi!', 'error');
+                return;
+            }
+
+            currentOrder = {
+                name: name,
+                note: note,
+                paymentMethod: paymentMethod
+            };
+
+            document.getElementById('checkoutModal').classList.remove('active');
+
+            if (paymentMethod === 'qris') {
+                showQrisPayment();
+            } else if (paymentMethod === 'gopay') {
+                showEwalletPayment();
+            } else if (paymentMethod === 'cod') {
+                showCodConfirm();
+            } else if (paymentMethod === 'whatsapp') {
+                showWhatsappChat();
+            }
+        }
+
+        // QRIS Payment
+        function showQrisPayment() {
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            document.getElementById('qrisAmount').textContent = `Rp ${total.toLocaleString('id-ID')}`;
+            document.getElementById('qrisPaymentModal').classList.add('active');
+        }
+
+        function closeQrisPayment() {
+            document.getElementById('qrisPaymentModal').classList.remove('active');
+            goToCheckout();
+        }
+
+        function confirmQrisPayment() {
+            document.getElementById('qrisPaymentModal').classList.remove('active');
+            showPaymentSuccess('qris');
+        }
+
+        // E-Wallet Payment
+        function showEwalletPayment() {
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            document.getElementById('ewallletAmount').textContent = `Rp ${total.toLocaleString('id-ID')}`;
+            document.getElementById('ewallletPaymentModal').classList.add('active');
+        }
+
+        function closeEwalletPayment() {
+            document.getElementById('ewallletPaymentModal').classList.remove('active');
+            goToCheckout();
+        }
+
+        function openGopay() {
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            if (isMobile) {
+                window.location.href = 'gojek://';
+            } else {
+                window.open('https://www.gojek.com/', '_blank');
+            }
+        }
+
+        function openOvo() {
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            if (isMobile) {
+                window.location.href = 'ovo://';
+            } else {
+                window.open('https://www.ovoid.io/', '_blank');
+            }
+        }
+
+        function openDana() {
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            if (isMobile) {
+                window.location.href = 'dana://';
+            } else {
+                window.open('https://www.dana.id/', '_blank');
+            }
+        }
+
+        function confirmEwalletPayment() {
+            document.getElementById('ewallletPaymentModal').classList.remove('active');
+            showPaymentSuccess('gopay');
+        }
+
+        // COD Confirmation
+        function showCodConfirm() {
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            document.getElementById('codAmount').textContent = `Rp ${total.toLocaleString('id-ID')}`;
+            document.getElementById('codConfirmModal').classList.add('active');
+        }
+
+        function closeCodConfirm() {
+            document.getElementById('codConfirmModal').classList.remove('active');
+            goToCheckout();
+        }
+
+        function confirmCodPayment() {
+            document.getElementById('codConfirmModal').classList.remove('active');
+            showPaymentSuccess('cod');
+        }
+
+        // WhatsApp Chat
+        function showWhatsappChat() {
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            let detailsHTML = `
+                <h4 class="font-bold text-brown-deep mb-3">📋 Detail Pesanan</h4>
+                <p class="text-sm text-gray-600 mb-2"><strong>Nama:</strong> ${currentOrder.name}</p>
+            `;
+
+            cart.forEach(item => {
+                detailsHTML += `<p class="text-sm text-gray-600 mb-2">• ${item.name} x${item.quantity} = Rp ${(item.price * item.quantity).toLocaleString('id-ID')}</p>`;
+            });
+
+            detailsHTML += `
+                <div class="border-t border-stone-300 mt-3 pt-3">
+                    <p class="font-bold text-brown-deep">Total: Rp ${total.toLocaleString('id-ID')}</p>
+                </div>
+            `;
+
+            document.getElementById('whatsappPaymentDetails').innerHTML = detailsHTML;
+            document.getElementById('whatsappChatModal').classList.add('active');
+        }
+
+        function closeWhatsappChat() {
+            document.getElementById('whatsappChatModal').classList.remove('active');
+        }
+
+        function openWhatsappChat() {
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            let message = `*🛍️ PESANAN BARU - Pancream Fruit*\n\n`;
+            message += `📝 *Nama:* ${currentOrder.name}\n`;
+            message += `💳 *Metode Pembayaran:* Transfer Manual\n\n`;
+            
+            message += `*📋 Detail Pesanan:*\n`;
+            cart.forEach(item => {
+                message += `• ${item.name} x${item.quantity} = Rp ${(item.price * item.quantity).toLocaleString('id-ID')}\n`;
+            });
+
+            message += `\n*💰 Total: Rp ${total.toLocaleString('id-ID')}*\n`;
+
+            if (currentOrder.note) {
+                message += `\n*📝 Catatan:*\n${currentOrder.note}\n`;
+            }
+
+            message += `\n---\nTerima kasih! 🙏`;
+
+            const whatsappUrl = `https://wa.me/6283161535757?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+
+            setTimeout(() => {
+                document.getElementById('whatsappChatModal').classList.remove('active');
+                showPaymentSuccess('whatsapp');
+            }, 500);
+        }
+
+        // Show Payment Success
+        function showPaymentSuccess(method) {
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+            let detailsHTML = `
+                <div class="payment-info-box">
+                    <h4 class="font-bold text-brown-deep mb-3">📋 Detail Pesanan</h4>
+                    <p class="text-sm text-gray-600 mb-2"><strong>Nama:</strong> ${currentOrder.name}</p>
+            `;
+
+            cart.forEach(item => {
+                detailsHTML += `<p class="text-sm text-gray-600 mb-2">• ${item.name} x${item.quantity} = Rp ${(item.price * item.quantity).toLocaleString('id-ID')}</p>`;
+            });
+
+            detailsHTML += `
+                    <div class="border-t border-stone-300 mt-3 pt-3">
+                        <p class="font-bold text-brown-deep">Total: Rp ${total.toLocaleString('id-ID')}</p>
+                    </div>
+                </div>
+
+                <div class="payment-info-box">
+                    <h4 class="font-bold text-brown-deep mb-3">📍 Status Pesanan</h4>
+            `;
+
+            if (method === 'qris') {
+                detailsHTML += `<p class="text-sm text-green-600 font-bold">✓ Pembayaran QRIS Berhasil</p>`;
+            } else if (method === 'gopay') {
+                detailsHTML += `<p class="text-sm text-green-600 font-bold">✓ Pembayaran E-Wallet Berhasil</p>`;
+            } else if (method === 'cod') {
+                detailsHTML += `<p class="text-sm text-green-600 font-bold">✓ Pesanan COD Dikonfirmasi</p>
+                <p class="text-xs text-gray-500 mt-2">Pembayaran akan dilakukan saat pesanan tiba</p>`;
+            } else if (method === 'whatsapp') {
+                detailsHTML += `<p class="text-sm text-green-600 font-bold">✓ Chat WhatsApp Dikirim</p>
+                <p class="text-xs text-gray-500 mt-2">Silakan tunggu konfirmasi dari kami</p>`;
+            }
+
+            detailsHTML += `</div>`;
+
+            document.getElementById('paymentDetails').innerHTML = detailsHTML;
+            document.getElementById('paymentSuccessModal').classList.add('active');
+        }
+
+        // Complete Order
+        function completeOrder() {
+            cart = [];
+            saveCart();
+            updateCartCount();
+            document.getElementById('paymentSuccessModal').classList.remove('active');
+            showNotification('Pesanan berhasil diproses! 🎉');
+        }
+
+        // Notification
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `fixed bottom-8 right-8 px-6 py-4 rounded-xl font-bold text-white z-[9999] animate-bounce ${
+                type === 'error' ? 'bg-red-500' : 'bg-green-500'
+            }`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Cart Button Event
+        document.getElementById('cartBtn').addEventListener('click', openCart);
+
+        // Close modal when clicking outside
+        document.getElementById('cartModal').addEventListener('click', function(e) {
+            if (e.target === this) closeCart();
+        });
+
+        document.getElementById('checkoutModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.remove('active');
+                openCart();
+            }
+        });
+
+        document.getElementById('paymentSuccessModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                completeOrder();
+            }
+        });
+
+        document.getElementById('whatsappChatModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeWhatsappChat();
+            }
+        });
+    </script>
 </body>
 </html>
